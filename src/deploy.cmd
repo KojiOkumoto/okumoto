@@ -108,10 +108,14 @@ IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
 
 :: 2. Exec Bundler
 IF EXIST "%DEPLOYMENT_TARGET%\Gemfile" (
-  cd "%DEPLOYMENT_TARGET%"
-  "%RUBY_HOME%\bin\ruby.exe" "%RUBY_HOME%\bin\bundle" install --verbose
+  echo Executing bundle install
 
+  PUSHD "%DEPLOYMENT_TARGET%"
+  
+  %JRUBY_EXE% -S "%JRUBY_BUNDLER_CMD%" install --without development:test --path vendor/bundle --binstubs vendor/bundle/bin -j4
   IF !ERRORLEVEL! NEQ 0 goto error
+  
+  POPD
 )
 
 
